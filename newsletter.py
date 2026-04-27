@@ -260,8 +260,26 @@ def send_email(html_content):
     msg["From"]    = gmail_user
     msg["To"]      = ", ".join(recipients)
 
-    msg.attach(MIMEText(f"Cruise & Maritime Daily — {date_str}\nView online: {pages_url}", "plain"))
-    msg.attach(MIMEText(html_content, "html"))
+    email_html = f"""<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+  <div style="max-width:500px;margin:0 auto;padding:40px 24px;text-align:center">
+    <p style="font-size:16px;color:#1a1f2e;margin:0 0 32px;text-align:left">Buenos dias,</p>
+    <a href="{pages_url}" target="_blank"
+       style="display:inline-block;background:linear-gradient(135deg,#00204a,#0066cc);
+              color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:10px;
+              font-size:15px;font-weight:700;letter-spacing:0.3px">
+      ⚓ Ver Cruise &amp; Maritime Daily
+    </a>
+    <p style="font-size:16px;color:#1a1f2e;margin:32px 0 0;text-align:left">Saludos,</p>
+  </div>
+</body>
+</html>"""
+
+    plain = f"Buenos dias,\n\nCruise & Maritime Daily — {date_str}\n{pages_url}\n\nSaludos,"
+    msg.attach(MIMEText(plain, "plain"))
+    msg.attach(MIMEText(email_html, "html"))
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
         server.login(gmail_user, gmail_password)
